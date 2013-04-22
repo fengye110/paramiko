@@ -1003,10 +1003,16 @@ class Channel (object):
         want_reply = m.get_boolean()
         server = self.transport.server_object
         ok = False
+        print "[ _channel:_handle_request]: key=",key
         if key == 'exit-status':
             self.exit_status = m.get_int()
             self.status_event.set()
             ok = True
+        elif key == 'env':
+            vname = m.get_string()
+            vvalue = m.get_string()
+            print "[ _channel:_handle_request]: env: vanem=",vname,"vvalue=",vvalue
+            ok=True
         elif key == 'xon-xoff':
             # ignore
             ok = True

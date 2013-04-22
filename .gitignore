@@ -5,3 +5,7 @@ dist/
 paramiko.egg-info/
 test.log
 docs/
+cscope*
+*.
+html*
+*.log

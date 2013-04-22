@@ -138,6 +138,7 @@ def parse_options():
     options, args = parser.parse_args()
 
     if len(args) != 1:
+        print args
         parser.error('Incorrect number of arguments.')
     if options.remote is None:
         parser.error('Remote address required (-r).')

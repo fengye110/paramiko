@@ -1551,6 +1551,7 @@ class Transport (threading.Thread):
             self._log(DEBUG, 'starting thread (client mode): %s' % hex(long(id(self)) & 0xffffffffL))
         try:
             try:
+                print self.local_version
                 self.packetizer.write_all(self.local_version + '\r\n')
                 self._check_banner()
                 self._send_kex_init()
@@ -1561,6 +1562,7 @@ class Transport (threading.Thread):
                         self._send_kex_init()
                     try:
                         ptype, m = self.packetizer.read_message()
+
                     except NeedRekeyException:
                         continue
                     if ptype == MSG_IGNORE:
@@ -1581,6 +1583,7 @@ class Transport (threading.Thread):
                             self.kex_engine.parse_next(ptype, m)
                             continue
 
+                    print " --- --- [server received message: ptype:] ---- ",MSG_NAMES[ptype]
                     if ptype in self._handler_table:
                         self._handler_table[ptype](self, m)
                     elif ptype in self._channel_handler_table:
@@ -2028,6 +2031,7 @@ class Transport (threading.Thread):
         chanid = m.get_int()
         initial_window_size = m.get_int()
         max_packet_size = m.get_int()
+        print "-- parse_channel_open:kind=",kind,"chanid="
         reject = False
         if (kind == 'auth-agent@openssh.com') and (self._forward_agent_handler is not None):
             self._log(DEBUG, 'Incoming forward agent connection')

@@ -51,6 +51,7 @@ class Server (paramiko.ServerInterface):
         self.event = threading.Event()
 
     def check_channel_request(self, kind, chanid):
+        print "[  check_channel_request ] kind=%s"%(kind),"id=",chanid
         if kind == 'session':
             return paramiko.OPEN_SUCCEEDED
         return paramiko.OPEN_FAILED_ADMINISTRATIVELY_PROHIBITED
@@ -77,6 +78,23 @@ class Server (paramiko.ServerInterface):
                                   pixelheight, modes):
         return True
 
+    def check_channel_forward_agent_request(self, channel):
+        return True
+
+    def check_port_forward_request(self, address, port):
+        print " server: check prot forward request",address,port
+        if self.t is not None:
+            def handler(channel, ori,serv):
+                print "_____[forward handler]:",ori,serv
+                pass
+            self.t.request_port_forward(address,port,None)
+        return True
+
+class forward_helper(threading.Thread):
+    """class documentation"""
+    def __init__(self, ):
+        """__init__ documentation"""
+        pass
 
 # now connect
 try:
@@ -100,6 +118,7 @@ except Exception, e:
 print 'Got a connection!'
 
 try:
+    print "client:",client
     t = paramiko.Transport(client)
     try:
         t.load_server_moduli()
@@ -109,6 +128,7 @@ try:
     t.add_server_key(host_key)
     server = Server()
     try:
+        server.t = t;
         t.start_server(server=server)
     except paramiko.SSHException, x:
         print '*** SSH negotiation failed.'
